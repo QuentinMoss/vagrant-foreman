@@ -1,0 +1,27 @@
+---
+foreman_version: '1.11'
+foreman_package_url: https://yum.theforeman.org/releases/{{ foreman_version }}/el7/x86_64/foreman-release.rpm
+foreman_ports:
+   # http+https
+   - 80/tcp
+   - 443/tcp
+   # puppet
+   - 8140/tcp
+   # dns
+   - 53/udp
+   # tftp for kickstarts
+   - 69/tcp
+   - 67-69/udp
+# auth
+foreman_install_opts:
+    - '--foreman-admin-username admin'
+    - '--foreman-admin-password changeme'
+    - '--enable-foreman-proxy'
+    - '--foreman-proxy-tftp true'
+    - '--foreman-proxy-tftp-servername 10.127.127.127'
+    - '--foreman-proxy-dns=true'
+    - '--foreman-proxy-dns-interface=enp0s8'
+    - '--foreman-proxy-dns-zone localdomain'
+    - '--foreman-proxy-dns-reverse 127.127.10.in-addr.arpa'
+    - '--foreman-proxy-dns-forwarders 10.0.2.3'
+    - '--foreman-proxy-foreman-base-url=https://vagrant-foreman.localdomain'

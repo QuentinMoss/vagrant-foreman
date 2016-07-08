@@ -1,0 +1,24 @@
+---
+   # install the foreman repo
+ - name: install foreman repo
+   yum: name="{{ foreman_package_url }}" state=present
+   # install the foreman package then run foreman-installer
+ - name: install foreman package
+   yum: name=foreman-installer state=present
+ - name: run foreman installer
+   command: foreman-installer {{ foreman_install_opts | join (' ') }}
+   # get dat firewall running boi
+ - name: enable and start firewall
+   service: name=firewalld enabled=yes state=started
+   # allow access to foreman external portsr
+ - name: configure firewall
+   command: firewall-cmd --permanent --add-port {{ item }}
+   notify:
+       - reload firewall
+   with_items: "{{ foreman_ports }}"
+   # configure the NAT gateway
+ - name: configure default gateway
+   lineinfile:
+       regexp: '^GATEWAY=.*$'
+       line: "GATEWAY=10.0.2.2" # virtualbox default nat gateway
+       dest: /etc/sysconfig/network
